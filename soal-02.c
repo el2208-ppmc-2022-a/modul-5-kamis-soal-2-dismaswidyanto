@@ -51,13 +51,16 @@ void hitung_akar(float* x, int degree, int* coef, int* coef_dev){
 	}
 }
 
-void input_polinom(int* degree, int* coef){
-	// Masukkan derajat polinom
+
+int main(){
+	int degree;
+	int *coef = (int*) malloc (sizeof(int));
+		// Masukkan derajat polinom
 	printf("Masukkan derajat polinom: ");
-	scanf("%d",degree);
+	scanf("%d",&degree);
 
 	// Ubah ukuran array derajat polinom
-	coef = realloc(coef,((*degree)+1)*sizeof(int));
+	coef = realloc(coef,((degree)+1)*sizeof(int));
 
 	// Input string koefisien polinom
 	printf("Masukkan koefisien polinom: ");
@@ -65,20 +68,13 @@ void input_polinom(int* degree, int* coef){
 	char* token;
 	scanf("%s",coef_str);
 
-	int i = *degree;
+	int i = degree;
 	token = strtok(coef_str,",");
 	while(token != NULL){
 		coef[i] = atoi(token);
 		i -= 1;
 		token = strtok(NULL,",");
-	}    
-}
-
-
-int main(){
-	int degree;
-	int *coef = (int*) malloc (sizeof(int));
-	input_polinom(&degree, coef);
+	}
 
 	int coef_der[degree];
 	int degree_der;
