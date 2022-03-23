@@ -11,11 +11,81 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define LEN_MAX 255
+
+float hitung_polinom(float x, int degree, int* coef){
+	float sum = 0;
+	float temp = 0;
+	for(int i = 0; i<=degree; i++){
+		temp = 1;
+		for(int j=0; j<i; j++){
+			temp *= x;
+		}
+		sum += temp*coef[i];
+	}
+	return sum;
+}
+
+int turunan_polinom(int* degree, int curr_degree, int* coef, int* coef_new){
+	coef_new[curr_degree-1] = (curr_degree)*coef[curr_degree];
+
+	if(curr_degree > 1){
+		turunan_polinom(degree,curr_degree-1,coef,coef_new);
+	}
+	else{ // Asumsikan derajat polinom terkecil adalah 1
+		return *degree-1;
+	}
+}
+
+void hitung_akar(float* x, int degree, int* coef, int* coef_dev){
+	float hasil_polinom;
+	float hasil_der;
+	hasil_polinom = hitung_polinom(*x,degree,coef);
+	if(hasil_polinom != 0){
+		hasil_der = hitung_polinom(*x,degree-1,coef_dev);
+		*x= *x - hasil_polinom/hasil_der;
+		hitung_akar(x,degree,coef,coef_dev);
+	}
+	else{
+		return;
+	}
+}
+
+void input_polinom(int* degree, int* coef){
+	// Masukkan derajat polinom
+	printf("Masukkan derajat polinom: ");
+	scanf("%d",degree);
+
+	// Ubah ukuran array derajat polinom
+	coef = realloc(coef,((*degree)+1)*sizeof(int));
+
+	// Input string koefisien polinom
+	printf("Masukkan koefisien polinom: ");
+	char coef_str[LEN_MAX];
+	char* token;
+	scanf("%s",coef_str);
+
+	int i = *degree;
+	token = strtok(coef_str,",");
+	while(token != NULL){
+		coef[i] = atoi(token);
+		i -= 1;
+		token = strtok(NULL,",");
+	}    
+}
+
 
 int main(){
-	// Format print untuk autograder
-	// Program harus menggunakan fungsi rekursif. Silahkan tambahkan sendiri fungsi yang diperlukan
-	printf("Masukkan derajat polinom: ");
-	printf("Masukkan koefisien polinom: ");
-	printf("Akar polinom bersangkutan yang paling dekat dengan 0 adalah %.2f",...);
+	int degree;
+	int *coef = (int*) malloc (sizeof(int));
+	input_polinom(&degree, coef);
+
+	int coef_der[degree];
+	int degree_der;
+	degree_der = turunan_polinom(&degree, degree, coef,coef_der);
+
+	float root=0;
+	hitung_akar(&root,degree,coef,coef_der);
+	printf("Akar polinom bersangkutan yang paling dekat dengan 0 adalah %.2f",root);
+	free(coef);
 }
